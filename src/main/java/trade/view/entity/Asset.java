@@ -28,6 +28,9 @@ public class Asset {
     @Column(nullable = false)
     private AssetType type;
 
+    @Column(nullable = false)
+    private Integer amount;
+
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
     private Map<String,Object> parameters;

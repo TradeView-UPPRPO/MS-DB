@@ -9,6 +9,7 @@ public record AssetDto(
         Long          id,
         Long          userId,
         String        symbol,
+        Integer amount,
         AssetType     type,
         Map<String,Object> parameters,
         Instant       createdAt,

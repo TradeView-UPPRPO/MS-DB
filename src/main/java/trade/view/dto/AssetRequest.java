@@ -13,5 +13,8 @@ public record AssetRequest(
         @NotNull
         AssetType type,
 
+        @NotNull
+        Integer amount,
+
         Map<String,Object> parameters
 ) {}

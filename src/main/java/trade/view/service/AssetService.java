@@ -60,6 +60,7 @@ public class AssetService {
                 a.getId(),
                 a.getUser().getId(),
                 a.getSymbol(),
+                a.getAmount(),
                 a.getType(),
                 a.getParameters(),
                 a.getCreatedAt(),
@@ -115,6 +116,7 @@ public class AssetService {
         a.setUser(user);
         a.setSymbol(req.symbol());
         a.setType(req.type());
+        a.setAmount(req.amount());
         a.setParameters(params);
 
         return toDto(assetRepo.save(a));
@@ -143,6 +145,7 @@ public class AssetService {
         }
 
         ex.setSymbol(req.symbol());
+        ex.setAmount(req.amount());
         ex.setType  (req.type());
         ex.setParameters(params);
 
