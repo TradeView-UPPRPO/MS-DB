@@ -4,14 +4,6 @@ spring:
     username: app_user
     password: secret_app_pass
 
-  flyway:
-    enabled: true
-    user: flyway_user
-    password: secret_flyway_pass
-    locations: classpath:db/migration
-    baseline-on-migrate: true
-    baseline-version: 3
-
 logging:
   level:
     org.springframework.boot.autoconfigure.flyway: DEBUG
