@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,7 +100,10 @@ public class AssetService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
 
-        Map<String,Object> params = new HashMap<>(req.parameters());
+        Map<String,Object> params = new HashMap<>(Optional
+                .ofNullable(req.parameters())
+                .orElse(Map.of()));
+
 
         // Если цена не передана – берём последнюю из MarketData
         if (!params.containsKey("buyPrice")) {
@@ -132,7 +136,10 @@ public class AssetService {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Asset not found for this user");
 
-        Map<String,Object> params = new HashMap<>(req.parameters());
+        Map<String,Object> params = new HashMap<>(Optional
+                .ofNullable(req.parameters())
+                .orElse(Map.of()));
+
 
         if (!params.containsKey("buyPrice")) {          // подставляем и при PUT
             BigDecimal price = mdRepo
