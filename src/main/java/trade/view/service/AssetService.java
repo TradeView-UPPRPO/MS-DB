@@ -7,11 +7,16 @@ import org.springframework.web.server.ResponseStatusException;
 import trade.view.dto.AssetDto;
 import trade.view.dto.AssetRequest;
 import trade.view.entity.Asset;
+import trade.view.entity.MarketData;
 import trade.view.entity.User;
 import trade.view.repository.AssetRepository;
+import trade.view.repository.MarketDataRepository;
 import trade.view.repository.UserRepository;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,10 +25,12 @@ public class AssetService {
 
     private final AssetRepository assetRepo;
     private final UserRepository userRepo;
+    private final MarketDataRepository mdRepo;
 
-    public AssetService(AssetRepository assetRepo, UserRepository userRepo) {
+    public AssetService(AssetRepository assetRepo, UserRepository userRepo, MarketDataRepository mdRepo) {
         this.assetRepo  = assetRepo;
         this.userRepo = userRepo;
+        this.mdRepo = mdRepo;
     }
 
     // Список активов конкретного пользователя
@@ -87,33 +94,59 @@ public class AssetService {
     // Создать актив из DTO
     @Transactional
     public AssetDto createFromDto(Long userId, AssetRequest req) {
-        User u = userRepo.findById(userId)
+        User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
+
+        Map<String,Object> params = new HashMap<>(req.parameters());
+
+        // Если цена не передана – берём последнюю из MarketData
+        if (!params.containsKey("buyPrice")) {
+            BigDecimal price = mdRepo
+                    .findFirstBySymbolOrderByFetchedAtDesc(req.symbol())
+                    .map(MarketData::getPrice)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Нет актуальной цены для %s".formatted(req.symbol())));
+            params.put("buyPrice", price);
+        }
+
         Asset a = new Asset();
-        a.setUser(u);
+        a.setUser(user);
         a.setSymbol(req.symbol());
         a.setType(req.type());
-        a.setParameters(req.parameters());
-        Asset saved = assetRepo.save(a);
-        return toDto(saved);
+        a.setParameters(params);
+
+        return toDto(assetRepo.save(a));
     }
 
     // Обновить актив из DTO
     @Transactional
     public AssetDto updateFromDto(Long userId, Long assetId, AssetRequest req) {
-        Asset existing = assetRepo.findById(assetId)
+        Asset ex = assetRepo.findById(assetId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Asset not found"));
-        if (!existing.getUser().getId().equals(userId)) {
+        if (!ex.getUser().getId().equals(userId))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Asset not found for this user");
+
+        Map<String,Object> params = new HashMap<>(req.parameters());
+
+        if (!params.containsKey("buyPrice")) {          // подставляем и при PUT
+            BigDecimal price = mdRepo
+                    .findFirstBySymbolOrderByFetchedAtDesc(req.symbol())
+                    .map(MarketData::getPrice)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Нет актуальной цены для %s".formatted(req.symbol())));
+            params.put("buyPrice", price);
         }
-        existing.setSymbol(req.symbol());
-        existing.setType(req.type());
-        existing.setParameters(req.parameters());
-        Asset updated = assetRepo.save(existing);
-        return toDto(updated);
+
+        ex.setSymbol(req.symbol());
+        ex.setType  (req.type());
+        ex.setParameters(params);
+
+        return toDto(assetRepo.save(ex));
     }
 
     // Удалить актив
