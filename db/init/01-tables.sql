@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS assets
     user_id    INT         NOT NULL REFERENCES users (id) ON DELETE CASCADE ON UPDATE RESTRICT,
     symbol     TEXT        NOT NULL,
     type       asset_type  NOT NULL,
-    amount INT NOT NULL.
+    amount INT NOT NULL,
     parameters JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
