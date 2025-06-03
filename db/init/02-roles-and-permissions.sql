@@ -1,5 +1,5 @@
 -- app_user может только читать и изменять данные в существующих таблицах
-CREATE USER app_user WITH PASSWORD 'secret_app_pass';
+-- CREATE USER app_user WITH PASSWORD 'secret_app_pass';
 
 GRANT CONNECT ON DATABASE msdb TO app_user;
 GRANT USAGE ON SCHEMA public TO app_user;
