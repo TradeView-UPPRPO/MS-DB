@@ -1,9 +1,8 @@
-# src/main/resources/application-docker.yml
 spring:
   datasource:
     url: jdbc:postgresql://postgres:5432/msdb
     username: app_user          # тот же пользователь, которого создаёт init-скрипт
-    password: secret            # пароль из V2__create_app_user.sql
+    password: secret_app_pass            # пароль из V2__create_app_user.sql
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -15,10 +14,8 @@ spring:
         format_sql: true
 
   flyway:
-    enabled: true               # включено по умолчанию, но явно не помешает
-    baseline-on-migrate: true   # ← ключевое: если history-таблицы нет – создаёт её
-    baseline-version: 0         # ← помечает текущее состояние базы как «версия 0»
-    # locations: classpath:db/migration   # (остается дефолт)
+    enabled: false
+
 
 server:
   port: 8080
