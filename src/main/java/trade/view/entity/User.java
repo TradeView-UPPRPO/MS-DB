@@ -20,6 +20,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(name = "telegram_id", nullable = false, unique = true)
+    private Long telegramId;
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false,

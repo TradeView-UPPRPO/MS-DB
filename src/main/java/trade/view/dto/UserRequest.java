@@ -9,5 +9,8 @@ public record UserRequest(
         String username,
 
         @NotNull
+        Long telegramId,
+
+        @NotNull
         UserRole role
 ) {}

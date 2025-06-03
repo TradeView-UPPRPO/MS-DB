@@ -31,8 +31,14 @@ public class UserService {
         return userRepo.findById(id);
     }
 
+    public Optional<User> findByTelegramId(Long tid) {
+        return userRepo.findByTelegramId(tid);
+    }
+
     @Transactional
     public User create(User user) {
+        if (user.getTelegramId() == null)
+            throw new IllegalArgumentException("telegramId is required");
         return userRepo.save(user);
     }
 
@@ -44,6 +50,7 @@ public class UserService {
         return new UserDto(
                 u.getId(),
                 u.getUsername(),
+                u.getTelegramId(),
                 u.getRole(),
                 u.getCreatedAt(),
                 u.getUpdatedAt()
@@ -71,6 +78,7 @@ public class UserService {
     public UserDto createFromDto(UserRequest req) {
         User u = new User();
         u.setUsername(req.username());
+        u.setTelegramId(req.telegramId());
         u.setRole(req.role());
         User saved = userRepo.save(u);
         return toDto(saved);
@@ -83,6 +91,7 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
         existing.setUsername(req.username());
+        existing.setTelegramId(req.telegramId());
         existing.setRole(req.role());
         User updated = userRepo.save(existing);
         return toDto(updated);

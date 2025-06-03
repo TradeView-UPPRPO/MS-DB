@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import trade.view.dto.UserDto;
 import trade.view.dto.UserRequest;
+import trade.view.entity.User;
 import trade.view.service.UserService;
 
 import java.util.List;
@@ -45,6 +47,14 @@ public class UserController {
         var dto = userService.createFromDto(request);
         log.debug("Created user {} with id={}", dto.username(), dto.id());
         return dto;
+    }
+
+    @GetMapping(params = "telegramId")
+    public User byTelegramId(@RequestParam Long telegramId) {
+        return userService.findByTelegramId(telegramId)
+                .map(dto -> dto)                 
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     // Обновить пользователя
