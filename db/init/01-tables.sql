@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users
 (
     id         SERIAL PRIMARY KEY,
     username   TEXT        NOT NULL UNIQUE,
-    telegramid BIGINT NOT NULL UNIQUE,
+    telegram_id BIGINT NOT NULL UNIQUE,
     role       user_role   NOT NULL DEFAULT 'USER',
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
