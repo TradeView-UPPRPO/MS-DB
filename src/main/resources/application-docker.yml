@@ -1,24 +1,11 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/msdb
-    username: app_user          # тот же пользователь, которого создаёт init-скрипт
-    password: secret_app_pass            # пароль из V2__create_app_user.sql
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate        # схема уже есть – только проверяем
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
+    url: jdbc:postgresql://postgres:5432/msdb?stringtype=unspecified
+    username: app_user
+    password: secret_app_pass
 
   flyway:
     enabled: false
-
-
-server:
-  port: 8080
 
 logging:
   level:
