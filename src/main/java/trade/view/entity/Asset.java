@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Map;
 
@@ -28,8 +30,8 @@ public class Asset {
     @Column(nullable = false)
     private AssetType type;
 
-    @Column(nullable = false)
-    private Integer amount;
+    @Column(name = "amount", nullable = false, precision = 28, scale = 8)
+    private BigDecimal amount;
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
