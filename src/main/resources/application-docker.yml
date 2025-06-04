@@ -4,10 +4,16 @@ spring:
     username: app_user
     password: secret_app_pass
 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   flyway:
     enabled: false
 
 logging:
   level:
     root: INFO
-    org.flywaydb: INFO
