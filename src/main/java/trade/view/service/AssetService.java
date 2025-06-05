@@ -96,12 +96,12 @@ public class AssetService {
     // Создать актив из DTO
     @Transactional
     public AssetDto createFromDto(Long userId, AssetRequest req) {
-        // 1) Проверяем, что пользователь существует
+        // Проверяем, что пользователь существует
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
 
-        // 2) Подготовим параметры (в т.ч. buyPrice)
+        // Подготовим параметры
         Map<String, Object> params = new HashMap<>(Optional
                 .ofNullable(req.parameters())
                 .orElse(Map.of()));
@@ -116,7 +116,7 @@ public class AssetService {
             params.put("buyPrice", price);
         }
 
-        // 3) Проверяем, есть ли уже актив с таким символом у этого пользователя
+        //  Проверяем, есть ли уже актив с таким символом у этого пользователя
         Optional<Asset> existingOpt = assetRepo.findByUserIdAndSymbol(userId, req.symbol());
         if (existingOpt.isPresent()) {
             // Если есть – суммируем amount
@@ -127,14 +127,13 @@ public class AssetService {
             BigDecimal sumAmount = oldAmount.add(newAmount);
             existing.setAmount(sumAmount);
 
-            // Если нужно, можно обновить параметры: например, оставим последний buyPrice
             existing.setParameters(params);
 
             Asset saved = assetRepo.save(existing);
             return toDto(saved);
         }
 
-        // 4) Если актива с таким символом нет – создаём новый
+        // Если актива с таким символом нет – создаём новый
         Asset a = new Asset();
         a.setUser(user);
         a.setSymbol(req.symbol());
@@ -162,7 +161,7 @@ public class AssetService {
                 .orElse(Map.of()));
 
 
-        if (!params.containsKey("buyPrice")) {          // подставляем и при PUT
+        if (!params.containsKey("buyPrice")) {
             BigDecimal price = mdRepo
                     .findFirstBySymbolOrderByFetchedAtDesc(req.symbol())
                     .map(MarketData::getPrice)
